@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mur de Post-it 2.0</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="scene-bg">
+    <canvas id="aurora-canvas"></canvas>
+    <div class="stars"></div>
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-cube">
+          <div class="cube-face front">📌</div>
+        </div>
+        <div class="logo-text">
+          <h1>Mur de Post-it</h1>
+          <span class="version-badge">v2.0</span>
+        </div>
+      </div>
+      <div class="stats-bar">
+        <div class="stat-chip">
+          <span class="stat-icon">📝</span>
+          <span id="stat-posts">0</span>
+          <span class="stat-label">posts</span>
+        </div>
+        <div class="stat-chip">
+          <span class="stat-icon">👍</span>
+          <span id="stat-votes">0</span>
+          <span class="stat-label">votes</span>
+        </div>
+        <div class="stat-chip">
+          <span class="stat-icon">💬</span>
+          <span id="stat-comments">0</span>
+          <span class="stat-label">commentaires</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <div class="panel form-panel">
+        <div class="panel-header">
+          <span class="panel-icon">✨</span>
+          <h2 id="form-title">Nouveau Post</h2>
+        </div>
+        <form id="new-post-form">
+          <div class="field">
+            <label for="title">Titre <span class="req">*</span></label>
+            <input type="text" id="title" placeholder="Un titre accrocheur..." required maxlength="100" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="author">Auteur</label>
+            <input type="text" id="author" placeholder="Votre nom..." maxlength="50" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="content">Message <span class="req">*</span></label>
+            <textarea id="content" placeholder="Partagez votre idée..." required rows="4" maxlength="500"></textarea>
+            <span class="char-counter"><span id="char-count">0</span>/500</span>
+          </div>
+          <div class="field">
+            <label>Catégorie</label>
+            <div class="tag-grid" id="tag-grid">
+              <button type="button" class="tag-btn selected" data-tag="général">💬 Général</button>
+              <button type="button" class="tag-btn" data-tag="idée">💡 Idée</button>
+              <button type="button" class="tag-btn" data-tag="question">❓ Question</button>
+              <button type="button" class="tag-btn" data-tag="urgent">🚨 Urgent</button>
+              <button type="button" class="tag-btn" data-tag="fun">😄 Fun</button>
+              <button type="button" class="tag-btn" data-tag="annonce">📢 Annonce</button>
+            </div>
+            <input type="hidden" id="post-tag" value="général">
+          </div>
+          <div class="field">
+            <label>Couleur</label>
+            <div class="color-grid">
+              <button type="button" class="color-btn selected" data-color="yellow" style="--c:#fbbf24" title="Jaune"></button>
+              <button type="button" class="color-btn" data-color="pink"   style="--c:#f472b6" title="Rose"></button>
+              <button type="button" class="color-btn" data-color="blue"   style="--c:#60a5fa" title="Bleu"></button>
+              <button type="button" class="color-btn" data-color="green"  style="--c:#34d399" title="Vert"></button>
+              <button type="button" class="color-btn" data-color="orange" style="--c:#fb923c" title="Orange"></button>
+              <button type="button" class="color-btn" data-color="purple" style="--c:#a78bfa" title="Violet"></button>
+            </div>
+            <input type="hidden" id="post-color" value="yellow">
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="submit-btn">
+              <span>➕</span> Publier
+            </button>
+            <button type="button" class="btn btn-ghost" id="cancel-btn" style="display:none" onclick="cancelEdit()">
+              Annuler
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel filter-panel">
+        <div class="panel-header">
+          <span class="panel-icon">🔍</span>
+          <h2>Filtres</h2>
+        </div>
+        <div class="field">
+          <input type="text" id="search-input" placeholder="🔎 Rechercher...">
+        </div>
+        <div class="field">
+          <label>Catégorie</label>
+          <div class="filter-tags">
+            <button class="filter-tag active" data-tag="">🌐 Tous</button>
+            <button class="filter-tag" data-tag="général">💬 Général</button>
+            <button class="filter-tag" data-tag="idée">💡 Idée</button>
+            <button class="filter-tag" data-tag="question">❓ Question</button>
+            <button class="filter-tag" data-tag="urgent">🚨 Urgent</button>
+            <button class="filter-tag" data-tag="fun">😄 Fun</button>
+            <button class="filter-tag" data-tag="annonce">📢 Annonce</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Trier par</label>
+          <div class="sort-tabs">
+            <button class="sort-tab active" data-sort="date">🕐 Récents</button>
+            <button class="sort-tab" data-sort="popularity">🔥 Populaires</button>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- WALL -->
+    <section class="wall">
+      <div class="wall-header">
+        <h2 class="wall-title">🧱 Le Mur</h2>
+        <button class="btn btn-ghost btn-sm" onclick="fetchPosts()">🔄 Rafraîchir</button>
+      </div>
+      <div id="loading" class="loading-state" style="display:none">
+        <div class="loader-3d">
+          <div class="loader-cube">
+            <div class="lc-face lc-front"></div>
+            <div class="lc-face lc-back"></div>
+            <div class="lc-face lc-left"></div>
+            <div class="lc-face lc-right"></div>
+            <div class="lc-face lc-top"></div>
+            <div class="lc-face lc-bottom"></div>
+          </div>
+        </div>
+        <p>Chargement...</p>
+      </div>
+      <div id="empty-state" class="empty-state" style="display:none">
+        <div class="empty-icon">🗒️</div>
+        <p>Aucun post trouvé.</p>
+        <small>Soyez le premier à contribuer !</small>
+      </div>
+      <div id="posts" class="posts-grid"></div>
+    </section>
+
+  </main>
+
+  <!-- MODAL -->
+  <div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3>💬 Commentaires</h3>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div id="modal-post-info" class="modal-post-info"></div>
+      <div id="comments-list" class="comments-list"></div>
+      <form id="comment-form" class="comment-form">
+        <input type="text" id="comment-author" placeholder="Votre nom (optionnel)" maxlength="50">
+        <textarea id="comment-content" placeholder="Votre commentaire..." required rows="2" maxlength="300"></textarea>
+        <button type="submit" class="btn btn-primary btn-sm">Envoyer 💬</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
